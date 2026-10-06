@@ -26,9 +26,9 @@
     .section-head span { color: var(--muted); font-size: .82rem; }
     .matches { display: grid; gap: .65rem; }
     .match-header, .medal-header { display:grid; align-items:center; gap:1rem; padding:.25rem 1.1rem .45rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
-    .match-header { grid-template-columns:72px 1.15fr 1.5fr .9fr .8fr; }
+    .match-header { grid-template-columns:72px 1.15fr 1.5fr .9fr .9fr .8fr; }
     .match-item { display: grid; gap: .35rem; }
-    .match-row { display: grid; grid-template-columns: 72px 1.15fr 1.5fr .9fr .8fr; gap: 1rem; align-items: center; width: 100%; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .75rem; color: #f5f7ff; background: rgb(15 18 43 / .62); text-align: left; transition: transform .15s, border-color .15s, background .15s; }
+    .match-row { display: grid; grid-template-columns: 72px 1.15fr 1.5fr .9fr .9fr .8fr; gap: 1rem; align-items: center; width: 100%; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .75rem; color: #f5f7ff; background: rgb(15 18 43 / .62); text-align: left; transition: transform .15s, border-color .15s, background .15s; }
     .match-row:hover, .match-row.active { transform: translateY(-1px); border-color: var(--gold); background: var(--panel2); }
     .match-number { color: var(--muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
     .match-map { font-size: 1.05rem; font-weight: 800; }
@@ -58,7 +58,7 @@
     .medal-header span:last-child { text-align:right; }
     .medal-detail { display:none; padding:1rem 1.1rem; border:1px solid #69618e; border-top:0; border-radius:0 0 .75rem .75rem; background:rgb(15 18 43 / .74); }
     .medal-detail.open { display:block; margin-top:-.65rem; }
-    .medal-players { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.45rem 1rem; }
+    .medal-players { display:grid; grid-template-columns:1fr; gap:.45rem; }
     .medal-player { display:flex; justify-content:space-between; gap:1rem; padding:.45rem 0; border-bottom:1px solid #302f55; color:#e9e8f4; font-size:.82rem; }
     .medal-player b { color:#f5f7ff; }
     .breakdown-toggle { display:flex; gap:.45rem; margin-bottom:.8rem; }
@@ -71,7 +71,7 @@
     .medal { color:var(--gold); font-weight:800; }
     .empty { padding:2rem; color:var(--muted); text-align:center; }
     footer { margin-top: 2rem; color: var(--muted); font-size:.76rem; text-align:center; }
-    @media (max-width: 720px) { .shell { padding-top: 28px; } .match-header { grid-template-columns:58px 1fr auto; } .match-header span:nth-child(n+4), .match-row .winner, .match-row .row-meta { display:none; } .match-row { grid-template-columns:58px 1fr auto; gap:.65rem; } .medal-header { grid-template-columns:1.2fr 1fr .5fr; } }
+    @media (max-width: 720px) { .shell { padding-top: 28px; } .match-header { grid-template-columns:58px 1fr auto; } .match-header span:nth-child(n+4), .match-row .winner, .match-row .loser, .match-row .row-meta { display:none; } .match-row { grid-template-columns:58px 1fr auto; gap:.65rem; } .medal-header { grid-template-columns:1.2fr 1fr .5fr; } }
     @media (max-width: 500px) { .detail-grid { grid-template-columns:1fr; } .match-row { padding:.85rem; } h1 { font-size: 3.5rem; } }
   </style>
 </head>
@@ -80,18 +80,18 @@
     <h1>Super Sweats KOTH</h1>
     <p class="intro">Super Sweats King of the Hill Tournament hosted by <a href="https://discord.gg/sglifers">SplitGate Lifers</a> on October 4, 2026.</p>
     <section class="section">
-      <div class="section-head"><h2>Matches</h2><span>Click a row to inspect its stats</span></div>
-      <div class="match-header" aria-hidden="true"><span>Match</span><span>Map / matchup</span><span>Score</span><span>Winner</span><span>Ended</span></div>
+      <div class="section-head"><h2>Matches</h2><span>Click a row to inspect</span></div>
+      <div class="match-header" aria-hidden="true"><span>Match</span><span>Map</span><span>Score</span><span>Winner</span><span>Loser</span><span>Ended</span></div>
       <div class="matches" id="matches"></div>
     </section>
     <section class="section">
-      <div class="section-head"><h2>Medals</h2><span>Click a row to inspect the breakdown</span></div>
+      <div class="section-head"><h2>Medals</h2><span>Click a row to inspect</span></div>
       <div class="breakdown-toggle" aria-label="Medal breakdown"><button id="breakdownPlayers" class="active" type="button">Players</button><button id="breakdownTeams" type="button">Teams</button></div>
       <div class="medal-header" aria-hidden="true"><span>Medal</span><span id="medalLeaderHeader">Top player</span><span>Count</span></div>
       <div id="medals"></div>
     </section>
   </main>
-  <script src="data.js"></script>
+  <script src="data.js?v=20261006-winners3"></script>
   <script>
     (() => {
       const D = window.SPLITSTATS_DATA;
@@ -104,6 +104,7 @@
       const namedTeams = (match) => [...new Set(D.teams.filter((row) => matchId(row) === matchId(match)).map((row) => row.Team))];
       const matchRows = () => D.matches;
       const winnerName = (match) => { const teams = namedTeams(match); return match.Winner === "Team_0" ? teams[0] : match.Winner === "Team_1" ? teams[1] : match.Winner; };
+      const loserName = (match) => namedTeams(match).find((team) => team !== winnerName(match)) || "";
       const finishName = (match) => ({ ScoreLimitReached: "Score Limit", "Timeout.Normal": "Timeout", "Timeout.SuddenDeath": "Sudden Death Timeout" }[match["Finish reason"]] || match["Finish reason"] || "");
       const MEDAL_ORDER = ["First Blood","5x Multikill","4x Multikill","3x Multikill","2x Multikill","15 Killstreak","10 Killstreak","5 Killstreak","Ended Killstreak","Avenger","Revenge","Comeback Kill","Low Health Kill","Long Distance Kill","Portal Flank Kill","Through Portal Kill","Saved Ally","Grave Kill","Suicide Kill"];
       const matchup = (match) => namedTeams(match).join(" – ");
@@ -111,7 +112,7 @@
         return;
       }
       function renderMatches(matches) {
-        q("matches").innerHTML = matches.length ? matches.map((m) => `<div class="match-item"><button class="match-row${state.selectedMatch === matchId(m) ? " active" : ""}" data-match="${esc(matchId(m))}"><span class="match-number">Match ${esc(m.Match)}</span><span><span class="match-map">${esc(m.Map)}</span><span class="matchup">${esc(matchup(m))}</span></span><span class="score">${int(m["Team 0"])} – ${int(m["Team 1"])}</span><span class="winner">${esc(winnerName(m))}</span><span class="row-meta">${esc(finishName(m))}</span></button>${state.selectedMatch === matchId(m) ? renderDetail(m) : ""}</div>`).join("") : `<div class="empty">No matches match these filters.</div>`;
+        q("matches").innerHTML = matches.length ? matches.map((m) => `<div class="match-item"><button class="match-row${state.selectedMatch === matchId(m) ? " active" : ""}" data-match="${esc(matchId(m))}"><span class="match-number">Match ${esc(m.Match)}</span><span><span class="match-map">${esc(m.Map)}</span></span><span class="score">${int(m["Team 0"])} – ${int(m["Team 1"])}</span><span class="winner">${esc(winnerName(m))}</span><span class="loser">${esc(loserName(m))}</span><span class="row-meta">${esc(finishName(m))}</span></button>${state.selectedMatch === matchId(m) ? renderDetail(m) : ""}</div>`).join("") : `<div class="empty">No matches match these filters.</div>`;
         q("matches").querySelectorAll("[data-match]").forEach((row) => row.addEventListener("click", () => { state.selectedMatch = state.selectedMatch === row.dataset.match ? null : row.dataset.match; render(); }));
       }
       function renderDetail(match) {

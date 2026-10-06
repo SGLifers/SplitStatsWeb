@@ -32,7 +32,7 @@ def rows(sheet, start_row):
 
 book = load_workbook(BOOK, data_only=True, read_only=True)
 matches = rows(book["Match Summary"], 8)[:6]
-named_winner_overrides = {"1": "Delta", "3": "Echo", "4": "Alpha", "5": "Alpha"}
+named_winner_overrides = {"1": "Delta", "2": "Alpha", "3": "Charlie", "4": "Delta", "5": "Alpha", "6": "Delta"}
 for match in matches:
     override = named_winner_overrides.get(str(match.get("Match")))
     if override:

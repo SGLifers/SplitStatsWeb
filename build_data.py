@@ -31,8 +31,14 @@ def rows(sheet, start_row):
 
 
 book = load_workbook(BOOK, data_only=True, read_only=True)
+matches = rows(book["Match Summary"], 8)[:6]
+named_winner_overrides = {"1": "Delta", "3": "Echo", "4": "Alpha", "5": "Alpha"}
+for match in matches:
+    override = named_winner_overrides.get(str(match.get("Match")))
+    if override:
+        match["Winner"] = override
 data = {
-    "matches": rows(book["Match Summary"], 8)[:6],
+    "matches": matches,
     "teams": rows(book["Teams"], 5),
     "players": rows(book["Player Medals"], 5),
     "events": rows(book["Medal Events"], 5),

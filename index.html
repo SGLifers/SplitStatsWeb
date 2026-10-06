@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10152b">
+    <title>SGL Super Sweats KOTH Tournament 10/04/2026</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #f5f7ff; background: #10152b; --panel:#171a37; --panel2:#222546; --line:#4f4a72; --muted:#b9b7d6; --gold:#f3be4f; --cyan:#75e6ed; --green:#7be4bd; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: radial-gradient(circle at 50% -10%, #493583 0, #10152b 52rem); }
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(94vw, 1040px); margin: 0 auto; padding: 42px 0 70px; }
+    .eyebrow { color: var(--muted); font-size: .76rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { margin: .25rem 0; font-size: clamp(3.2rem, 12vw, 6.6rem); line-height: .92; letter-spacing: -.08em; text-align:center; }
+    .intro { max-width: 700px; margin: 1.1rem auto 2.2rem; text-align: center; color: #d7d8e8; line-height: 1.6; }
+    .intro strong { color: var(--cyan); }
+    .intro a { color: var(--cyan); }
+    .controls { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; margin-bottom: 1.2rem; }
+    select { min-width: 160px; padding: .72rem .85rem; border: 1px solid #69618e; border-radius: .6rem; color: #f5f7ff; background: var(--panel); }
+    select:focus-visible, button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    .section { margin-top: 1.5rem; }
+    .section-head { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; margin-bottom: .8rem; }
+    h2 { margin: 0; font-size: 1.25rem; }
+    .section-head span { color: var(--muted); font-size: .82rem; }
+    .matches { display: grid; gap: .65rem; }
+    .match-header, .medal-header { display:grid; align-items:center; gap:1rem; padding:.25rem 1.1rem .45rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    .match-header { grid-template-columns:72px 1.15fr 1.5fr .9fr .8fr; }
+    .match-item { display: grid; gap: .35rem; }
+    .match-row { display: grid; grid-template-columns: 72px 1.15fr 1.5fr .9fr .8fr; gap: 1rem; align-items: center; width: 100%; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .75rem; color: #f5f7ff; background: rgb(15 18 43 / .62); text-align: left; transition: transform .15s, border-color .15s, background .15s; }
+    .match-row:hover, .match-row.active { transform: translateY(-1px); border-color: var(--gold); background: var(--panel2); }
+    .match-number { color: var(--muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+    .match-map { font-size: 1.05rem; font-weight: 800; }
+    .matchup { display:block; margin-top: .18rem; color: var(--muted); font-size: .78rem; }
+    .score { font-size: 1.3rem; font-weight: 800; letter-spacing: -.04em; }
+    .winner { color: var(--green); font-size: .8rem; font-weight: 800; }
+    .row-meta { color: var(--muted); font-size: .8rem; }
+    .detail { display: none; padding: 1.1rem 1.35rem 1.35rem; border: 1px solid #69618e; border-top: 0; border-radius: 0 0 .85rem .85rem; background: rgb(15 18 43 / .74); }
+    .detail.open { display: block; margin-top: -.7rem; }
+    .detail-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+    .detail h3 { margin: .25rem 0; font-size: 1.75rem; }
+    .detail-score { color: var(--gold); font-size: 2rem; font-weight: 850; }
+    .detail-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem; margin-top:1rem; }
+    .team-box { padding: .9rem; border-radius: .65rem; background: var(--panel2); }
+    .team-box h4 { margin:0; color:var(--cyan); font-size:1rem; }
+    .team-box p { margin:.35rem 0 .65rem; color:var(--muted); font-size:.8rem; }
+    .roster { display:flex; flex-wrap:wrap; gap:.4rem; }
+    .roster span { padding:.32rem .5rem; border-radius:.4rem; background:#2b2e55; color:#e9e8f4; font-size:.74rem; }
+    .medal-list { display:grid; gap:.65rem; }
+    .medal-header { grid-template-columns:1.6fr 1.2fr .6fr; }
+    .medal-item { display:grid; gap:.35rem; }
+    .medal-row { display:grid; grid-template-columns:1.6fr 1.2fr .6fr; gap:1rem; align-items:center; width:100%; padding:1rem 1.1rem; border:1px solid var(--line); border-radius:.75rem; color:#f5f7ff; background:rgb(15 18 43 / .62); text-align:left; }
+    .medal-row:hover, .medal-row.active { border-color:var(--gold); background:var(--panel2); }
+    .medal-row .medal-name { color:#f5f7ff; font-weight:800; }
+    .medal-row .medal-leader { color:var(--muted); font-size:.82rem; }
+    .medal-row .medal-count { color:#f5f7ff; font-size:1.15rem; font-weight:800; text-align:right; }
+    .medal-header span:last-child { text-align:right; }
+    .medal-detail { display:none; padding:1rem 1.1rem; border:1px solid #69618e; border-top:0; border-radius:0 0 .75rem .75rem; background:rgb(15 18 43 / .74); }
+    .medal-detail.open { display:block; margin-top:-.65rem; }
+    .medal-players { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.45rem 1rem; }
+    .medal-player { display:flex; justify-content:space-between; gap:1rem; padding:.45rem 0; border-bottom:1px solid #302f55; color:#e9e8f4; font-size:.82rem; }
+    .medal-player b { color:#f5f7ff; }
+    .breakdown-toggle { display:flex; gap:.45rem; margin-bottom:.8rem; }
+    .breakdown-toggle button { padding:.55rem .85rem; border:1px solid var(--line); border-radius:.55rem; color:var(--muted); background:var(--panel); font-weight:800; font-size:.78rem; }
+    .breakdown-toggle button.active, .breakdown-toggle button:hover { border-color:var(--gold); color:#f5f7ff; background:var(--panel2); }
+    table { width:100%; border-collapse:collapse; font-size:.8rem; }
+    th { position:sticky; top:0; padding:.75rem; color:var(--muted); background:#222546; cursor:pointer; font-size:.68rem; letter-spacing:.08em; text-align:left; text-transform:uppercase; }
+    td { padding:.68rem .75rem; border-top:1px solid #302f55; white-space:nowrap; }
+    tbody tr:hover { background:#222546; }
+    .medal { color:var(--gold); font-weight:800; }
+    .empty { padding:2rem; color:var(--muted); text-align:center; }
+    footer { margin-top: 2rem; color: var(--muted); font-size:.76rem; text-align:center; }
+    @media (max-width: 720px) { .shell { padding-top: 28px; } .match-header { grid-template-columns:58px 1fr auto; } .match-header span:nth-child(n+4), .match-row .winner, .match-row .row-meta { display:none; } .match-row { grid-template-columns:58px 1fr auto; gap:.65rem; } .medal-header { grid-template-columns:1.2fr 1fr .5fr; } }
+    @media (max-width: 500px) { .detail-grid { grid-template-columns:1fr; } .match-row { padding:.85rem; } h1 { font-size: 3.5rem; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <h1>Super Sweats KOTH</h1>
+    <p class="intro">Super Sweats King of the Hill Tournament hosted by <a href="https://discord.gg/sglifers">SplitGate Lifers</a> on October 4, 2026</p>
+    <section class="section">
+      <div class="section-head"><h2>Matches</h2><span>Click a row to inspect its stats</span></div>
+      <div class="match-header" aria-hidden="true"><span>Match</span><span>Map / matchup</span><span>Score</span><span>Winner</span><span>Ended</span></div>
+      <div class="matches" id="matches"></div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>Medals</h2><span>Click a row to inspect the breakdown</span></div>
+      <div class="breakdown-toggle" aria-label="Medal breakdown"><button id="breakdownPlayers" class="active" type="button">Players</button><button id="breakdownTeams" type="button">Teams</button></div>
+      <div class="medal-header" aria-hidden="true"><span>Medal</span><span id="medalLeaderHeader">Top player</span><span>Count</span></div>
+      <div id="medals"></div>
+    </section>
+  </main>
+  <script src="data.js"></script>
+  <script>
+    (() => {
+      const D = window.SPLITSTATS_DATA;
+      const state = { selectedMatch: null, selectedMedal: null, medalBreakdown: "player" };
+      const q = (id) => document.getElementById(id);
+      const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;", "'":"&#039;"}[c]));
+      const int = (value) => new Intl.NumberFormat("en-US").format(Number(value || 0));
+      const duration = (seconds) => { const s = Math.round(Number(seconds || 0)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+      const matchId = (row) => String(row.Match);
+      const namedTeams = (match) => [...new Set(D.teams.filter((row) => matchId(row) === matchId(match)).map((row) => row.Team))];
+      const matchRows = () => D.matches;
+      const winnerName = (match) => { const teams = namedTeams(match); return match.Winner === "Team_0" ? teams[0] : match.Winner === "Team_1" ? teams[1] : match.Winner; };
+      const finishName = (match) => ({ ScoreLimitReached: "Score Limit", "Timeout.Normal": "Timeout", "Timeout.SuddenDeath": "Sudden Death Timeout" }[match["Finish reason"]] || match["Finish reason"] || "");
+      const MEDAL_ORDER = ["First Blood","5x Multikill","4x Multikill","3x Multikill","2x Multikill","15 Killstreak","10 Killstreak","5 Killstreak","Ended Killstreak","Avenger","Revenge","Comeback Kill","Low Health Kill","Long Distance Kill","Portal Flank Kill","Through Portal Kill","Saved Ally","Grave Kill","Suicide Kill"];
+      const matchup = (match) => namedTeams(match).join(" – ");
+      function fillFilters() {
+        return;
+      }
+      function renderMatches(matches) {
+        q("matches").innerHTML = matches.length ? matches.map((m) => `<div class="match-item"><button class="match-row${state.selectedMatch === matchId(m) ? " active" : ""}" data-match="${esc(matchId(m))}"><span class="match-number">Match ${esc(m.Match)}</span><span><span class="match-map">${esc(m.Map)}</span><span class="matchup">${esc(matchup(m))}</span></span><span class="score">${int(m["Team 0"])} – ${int(m["Team 1"])}</span><span class="winner">${esc(winnerName(m))}</span><span class="row-meta">${esc(finishName(m))}</span></button>${state.selectedMatch === matchId(m) ? renderDetail(m) : ""}</div>`).join("") : `<div class="empty">No matches match these filters.</div>`;
+        q("matches").querySelectorAll("[data-match]").forEach((row) => row.addEventListener("click", () => { state.selectedMatch = state.selectedMatch === row.dataset.match ? null : row.dataset.match; render(); }));
+      }
+      function renderDetail(match) {
+        const teamRows = D.teams.filter((row) => matchId(row) === matchId(match));
+        return `<div class="detail open"><div class="detail-grid">${teamRows.map((row) => `<div class="team-box"><h4>${esc(row.Team)}</h4><div class="roster"><span>${esc(row.Captain)}</span><span>${esc(row["Player 2"])}</span><span>${esc(row["Player 3"])}</span><span>${esc(row["Player 4"])}</span></div></div>`).join("")}</div></div>`;
+      }
+      function renderMedals() {
+        const allowedMatches = new Set(matchRows().map(matchId));
+        const players = D.players.filter((row) => allowedMatches.has(matchId(row)));
+        const medalNames = [...new Set(D.players.flatMap((row) => Object.keys(row).filter((key) => !["Match","Map","Team","Player","Total medals","null"].includes(key))))].sort((a,b) => (MEDAL_ORDER.indexOf(a) < 0 ? 999 : MEDAL_ORDER.indexOf(a)) - (MEDAL_ORDER.indexOf(b) < 0 ? 999 : MEDAL_ORDER.indexOf(b)) || a.localeCompare(b));
+        const grouped = [...players.reduce((map, row) => { const key = state.medalBreakdown === "team" ? row.Team : (row.Player.toLowerCase().startsWith("wgrid93") ? "wgrid93" : row.Player); const item = map.get(key) || { player: state.medalBreakdown === "team" ? row.Team : row.Player, team: row.Team, medals: {} }; medalNames.forEach((name) => { item.medals[name] = (item.medals[name] || 0) + Number(row[name] || 0); }); map.set(key, item); return map; }, new Map()).values()];
+        const visibleMedals = medalNames;
+        const rows = visibleMedals.map((medal) => { const contenders = grouped.filter((row) => row.medals[medal] > 0); const top = contenders.slice().sort((a,b) => b.medals[medal] - a.medals[medal] || a.player.localeCompare(b.player))[0]; const total = contenders.reduce((sum, row) => sum + row.medals[medal], 0); return top ? { medal, leader: top.player, count: total } : null; }).filter(Boolean);
+        q("medalLeaderHeader").textContent = state.medalBreakdown === "team" ? "Top team" : "Top player";
+        q("medals").innerHTML = rows.length ? `<div class="medal-list">${rows.map((row) => { const detailRows = grouped.filter((player) => player.medals[row.medal] > 0).sort((a,b) => b.medals[row.medal] - a.medals[row.medal] || a.player.localeCompare(b.player)); return `<div class="medal-item"><button class="medal-row${state.selectedMedal === row.medal ? " active" : ""}" data-medal="${esc(row.medal)}"><span class="medal-name">${esc(row.medal)}</span><span class="medal-leader">${esc(row.leader)}</span><span class="medal-count">${int(row.count)}</span></button>${state.selectedMedal === row.medal ? `<div class="medal-detail open"><div class="medal-players">${detailRows.map((player) => `<div class="medal-player"><span>${esc(player.player)}${state.medalBreakdown === "player" ? ` · ${esc(player.team)}` : ""}</span><b>${int(player.medals[row.medal])}</b></div>`).join("")}</div></div>` : ""}</div>`; }).join("")}</div>` : `<div class="empty">No medal counts match these filters.</div>`;
+        q("medals").querySelectorAll("[data-medal]").forEach((row) => row.addEventListener("click", () => { state.selectedMedal = state.selectedMedal === row.dataset.medal ? null : row.dataset.medal; renderMedals(); }));
+      }
+      function render() { const matches = matchRows(); renderMatches(matches); renderMedals(); }
+      q("breakdownPlayers").addEventListener("click", () => { state.medalBreakdown = "player"; q("breakdownPlayers").classList.add("active"); q("breakdownTeams").classList.remove("active"); state.selectedMedal = null; renderMedals(); });
+      q("breakdownTeams").addEventListener("click", () => { state.medalBreakdown = "team"; q("breakdownTeams").classList.add("active"); q("breakdownPlayers").classList.remove("active"); state.selectedMedal = null; renderMedals(); });
+      fillFilters(); render();
+    })();
+  </script>
+</body>
+</html>

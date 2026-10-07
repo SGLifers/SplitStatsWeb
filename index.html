@@ -47,6 +47,14 @@
     .team-box p { margin:.35rem 0 .65rem; color:var(--muted); font-size:.8rem; }
     .roster { display:flex; flex-wrap:wrap; gap:.4rem; }
     .roster span { padding:.32rem .5rem; border-radius:.4rem; background:#2b2e55; color:#e9e8f4; font-size:.74rem; }
+    .scoreboard { display:grid; gap:.9rem; }
+    .scoreboard-team { overflow-x:auto; border:1px solid #3a3962; border-radius:.7rem; background:#191c3d; }
+    .scoreboard-team h4 { margin:0; padding:.8rem .75rem .3rem; color:var(--cyan); font-size:.9rem; }
+    .scoreboard-head, .scoreboard-row { display:grid; grid-template-columns:2fr repeat(5,.8fr); gap:.7rem; align-items:center; min-width:650px; padding:.6rem .75rem; }
+    .scoreboard-head { color:var(--muted); font-size:.66rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .scoreboard-row { border-top:1px solid #302f55; color:#e9e8f4; font-size:.78rem; }
+    .scoreboard-row strong { color:#f5f7ff; }
+    .scoreboard-head span:not(:first-child), .scoreboard-row span:not(:first-child) { text-align:right; }
     .medal-list { display:grid; gap:.65rem; }
     .medal-header { grid-template-columns:1.6fr 1.2fr .6fr; }
     .medal-item { display:grid; gap:.35rem; }
@@ -91,7 +99,7 @@
       <div id="medals"></div>
     </section>
   </main>
-  <script src="data.js?v=20261006-winners3"></script>
+  <script src="data.js?v=20261006-scoreboard-groups"></script>
   <script>
     (() => {
       const D = window.SPLITSTATS_DATA;
@@ -117,6 +125,12 @@
       }
       function renderDetail(match) {
         const teamRows = D.teams.filter((row) => matchId(row) === matchId(match));
+        const scoreboard = (D.scoreboards || []).filter((row) => matchId(row) === matchId(match));
+        if (scoreboard.length) {
+          const groups = teamRows.map((team) => ({ team: team.Team, rows: scoreboard.filter((row) => row.Team === team.Team) }));
+          const scoreboardHtml = groups.map((group) => `<section class="scoreboard-team"><h4>${esc(group.team)}</h4><div class="scoreboard-head"><span>Player</span><span>XP</span><span>Kills</span><span>Damage</span><span>Deaths</span><span>Hill time</span></div>${group.rows.map((row) => `<div class="scoreboard-row"><strong>${esc(row.Player)}</strong><span>${int(row.XP)}</span><span>${int(row.Kills)}</span><span>${int(row.Damage)}</span><span>${int(row.Deaths)}</span><span>${int(row["Hill Time"])}</span></div>`).join("")}</section>`).join("");
+          return `<div class="detail open"><div class="scoreboard">${scoreboardHtml}</div></div>`;
+        }
         return `<div class="detail open"><div class="detail-grid">${teamRows.map((row) => `<div class="team-box"><h4>${esc(row.Team)}</h4><div class="roster"><span>${esc(row.Captain)}</span><span>${esc(row["Player 2"])}</span><span>${esc(row["Player 3"])}</span><span>${esc(row["Player 4"])}</span></div></div>`).join("")}</div></div>`;
       }
       function renderMedals() {

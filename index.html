@@ -28,6 +28,9 @@
     .match-header, .medal-header { display:grid; align-items:center; gap:1rem; padding:.25rem 1.1rem .45rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
     .match-header { grid-template-columns:72px 1.15fr 1.5fr .9fr .9fr .8fr; }
     .match-item { display: grid; gap: .35rem; }
+    .match-with-video { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem; }
+    .match-video { color: var(--cyan); font-size: .8rem; padding: .75rem .25rem; white-space: nowrap; }
+    .match-video:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
     .match-row { display: grid; grid-template-columns: 72px 1.15fr 1.5fr .9fr .9fr .8fr; gap: 1rem; align-items: center; width: 100%; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .75rem; color: #f5f7ff; background: rgb(15 18 43 / .62); text-align: left; transition: transform .15s, border-color .15s, background .15s; }
     .match-row:hover, .match-row.active { transform: translateY(-1px); border-color: var(--gold); background: var(--panel2); }
     .match-number { color: var(--muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
@@ -103,6 +106,7 @@
   <script>
     (() => {
       const D = window.SPLITSTATS_DATA;
+      const MATCH_VIDEOS = Object.fromEntries([27, 603, 1294, 1982, 2584, 3716].map((seconds, index) => [String(index + 1), `https://youtu.be/Qm6CxRWx9nQ?t=${seconds}`]));
       const state = { selectedMatch: null, selectedMedal: null, medalBreakdown: "player" };
       const q = (id) => document.getElementById(id);
       const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;", "'":"&#039;"}[c]));
@@ -120,7 +124,7 @@
         return;
       }
       function renderMatches(matches) {
-        q("matches").innerHTML = matches.length ? matches.map((m) => `<div class="match-item"><button class="match-row${state.selectedMatch === matchId(m) ? " active" : ""}" data-match="${esc(matchId(m))}"><span class="match-number">Match ${esc(m.Match)}</span><span><span class="match-map">${esc(m.Map)}</span></span><span class="score">${int(m["Team 0"])} – ${int(m["Team 1"])}</span><span class="winner">${esc(winnerName(m))}</span><span class="loser">${esc(loserName(m))}</span><span class="row-meta">${esc(finishName(m))}</span></button>${state.selectedMatch === matchId(m) ? renderDetail(m) : ""}</div>`).join("") : `<div class="empty">No matches match these filters.</div>`;
+q("matches").innerHTML = matches.length ? matches.map((m) => `<div class="match-item"><div class="match-with-video"><button class="match-row${state.selectedMatch === matchId(m) ? " active" : ""}" data-match="${esc(matchId(m))}"><span class="match-number">Match ${esc(m.Match)}</span><span><span class="match-map">${esc(m.Map)}</span></span><span class="score">${int(m["Team 0"])} – ${int(m["Team 1"])}</span><span class="winner">${esc(winnerName(m))}</span><span class="loser">${esc(loserName(m))}</span><span class="row-meta">${esc(finishName(m))}</span></button><a class="match-video" href="${esc(MATCH_VIDEOS[matchId(m)])}" target="_blank" rel="noopener noreferrer" aria-label="Watch Match ${esc(m.Match)} video">Watch ↗</a></div>${state.selectedMatch === matchId(m) ? renderDetail(m) : ""}</div>`).join("") : `<div class="empty">No matches match these filters.</div>`;
         q("matches").querySelectorAll("[data-match]").forEach((row) => row.addEventListener("click", () => { state.selectedMatch = state.selectedMatch === row.dataset.match ? null : row.dataset.match; render(); }));
       }
       function renderDetail(match) {

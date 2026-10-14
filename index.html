@@ -101,7 +101,7 @@
     </section>
     <section class="section">
       <div class="section-head"><h2>Medals</h2><span>Click a row to inspect</span></div>
-      <div class="breakdown-toggle" aria-label="Medal breakdown"><button id="breakdownPlayers" class="active" type="button">Players</button><button id="breakdownTeams" type="button">Teams</button></div>
+      <div class="breakdown-toggle" aria-label="Medal breakdown"><button id="breakdownPlayers" class="active" type="button">Players</button><button id="breakdownTeams" type="button">Teams</button><button id="breakdownMatches" type="button">Matches</button></div>
       <div class="medal-header" aria-hidden="true"><span>Medal</span><span id="medalLeaderHeader">Top player</span><span>Count</span></div>
       <div id="medals"></div>
     </section>
@@ -145,16 +145,27 @@ q("matches").innerHTML = matches.length ? matches.map((m) => `<div class="match-
         const allowedMatches = new Set(matchRows().map(matchId));
         const players = D.players.filter((row) => allowedMatches.has(matchId(row)));
         const medalNames = [...new Set(D.players.flatMap((row) => Object.keys(row).filter((key) => !["Match","Map","Team","Player","Total medals","null"].includes(key))))].sort((a,b) => (MEDAL_ORDER.indexOf(a) < 0 ? 999 : MEDAL_ORDER.indexOf(a)) - (MEDAL_ORDER.indexOf(b) < 0 ? 999 : MEDAL_ORDER.indexOf(b)) || a.localeCompare(b));
-        const grouped = [...players.reduce((map, row) => { const key = state.medalBreakdown === "team" ? row.Team : (row.Player.toLowerCase().startsWith("wgrid93") ? "wgrid93" : row.Player); const item = map.get(key) || { player: state.medalBreakdown === "team" ? row.Team : row.Player, team: row.Team, medals: {} }; medalNames.forEach((name) => { item.medals[name] = (item.medals[name] || 0) + Number(row[name] || 0); }); map.set(key, item); return map; }, new Map()).values()];
+        const grouped = [...players.reduce((map, row) => { const key = state.medalBreakdown === "match" ? matchId(row) : state.medalBreakdown === "team" ? row.Team : (row.Player.toLowerCase().startsWith("wgrid93") ? "wgrid93" : row.Player); const item = map.get(key) || { player: state.medalBreakdown === "match" ? `Match ${row.Match} · ${row.Map}` : state.medalBreakdown === "team" ? row.Team : row.Player, team: row.Team, medals: {} }; medalNames.forEach((name) => { item.medals[name] = (item.medals[name] || 0) + Number(row[name] || 0); }); map.set(key, item); return map; }, new Map()).values()];
         const visibleMedals = medalNames;
         const rows = visibleMedals.map((medal) => { const contenders = grouped.filter((row) => row.medals[medal] > 0); const top = contenders.slice().sort((a,b) => b.medals[medal] - a.medals[medal] || a.player.localeCompare(b.player))[0]; const total = contenders.reduce((sum, row) => sum + row.medals[medal], 0); return top ? { medal, leader: top.player, count: total } : null; }).filter(Boolean);
-        q("medalLeaderHeader").textContent = state.medalBreakdown === "team" ? "Top team" : "Top player";
+        q("medalLeaderHeader").textContent = state.medalBreakdown === "match" ? "Top match" : state.medalBreakdown === "team" ? "Top team" : "Top player";
         q("medals").innerHTML = rows.length ? `<div class="medal-list">${rows.map((row) => { const detailRows = grouped.filter((player) => player.medals[row.medal] > 0).sort((a,b) => b.medals[row.medal] - a.medals[row.medal] || a.player.localeCompare(b.player)); return `<div class="medal-item"><button class="medal-row${state.selectedMedal === row.medal ? " active" : ""}" data-medal="${esc(row.medal)}"><span class="medal-name">${esc(row.medal)}</span><span class="medal-leader">${esc(row.leader)}</span><span class="medal-count">${int(row.count)}</span></button>${state.selectedMedal === row.medal ? `<div class="medal-detail open"><div class="medal-players">${detailRows.map((player) => `<div class="medal-player"><span>${esc(player.player)}${state.medalBreakdown === "player" ? ` · ${esc(player.team)}` : ""}</span><b>${int(player.medals[row.medal])}</b></div>`).join("")}</div></div>` : ""}</div>`; }).join("")}</div>` : `<div class="empty">No medal counts match these filters.</div>`;
         q("medals").querySelectorAll("[data-medal]").forEach((row) => row.addEventListener("click", () => { state.selectedMedal = state.selectedMedal === row.dataset.medal ? null : row.dataset.medal; renderMedals(); }));
       }
       function render() { const matches = matchRows(); renderMatches(matches); renderMedals(); }
-      q("breakdownPlayers").addEventListener("click", () => { state.medalBreakdown = "player"; q("breakdownPlayers").classList.add("active"); q("breakdownTeams").classList.remove("active"); state.selectedMedal = null; renderMedals(); });
-      q("breakdownTeams").addEventListener("click", () => { state.medalBreakdown = "team"; q("breakdownTeams").classList.add("active"); q("breakdownPlayers").classList.remove("active"); state.selectedMedal = null; renderMedals(); });
+      [["breakdownPlayers", "player"], ["breakdownTeams", "team"], ["breakdownMatches", "match"]].forEach(([id, breakdown]) => {
+        q(id).addEventListener("click", () => {
+          state.medalBreakdown = breakdown;
+          state.selectedMedal = null;
+          ["breakdownPlayers", "breakdownTeams", "breakdownMatches"].forEach((tabId) => {
+            const active = tabId === id;
+            q(tabId).classList.toggle("active", active);
+            q(tabId).setAttribute("aria-pressed", String(active));
+          });
+          renderMedals();
+        });
+        q(id).setAttribute("aria-pressed", String(state.medalBreakdown === breakdown));
+      });
       fillFilters(); render();
     })();
   </script>

@@ -26,13 +26,16 @@
     .section-head span { color: var(--muted); font-size: .82rem; }
     .matches { display: grid; gap: .65rem; }
     .match-header, .medal-header { display:grid; align-items:center; gap:1rem; padding:.25rem 1.1rem .45rem; color:var(--muted); font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
-    .match-header { grid-template-columns:72px 1.15fr 1.5fr .9fr .9fr .8fr; }
+    .match-header { grid-template-columns:72px 1.15fr 1.5fr .9fr .9fr .8fr 65px; }
     .match-item { display: grid; gap: .35rem; }
-    .match-with-video { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem; }
-    .match-video { color: var(--cyan); font-size: .8rem; padding: .75rem .25rem; white-space: nowrap; }
+    .match-with-video { display: grid; grid-template-columns: minmax(0, 1fr) 65px; align-items: center; padding-right: 1.1rem; border: 1px solid var(--line); border-radius: .75rem; background: rgb(15 18 43 / .62); }
+    .match-with-video:hover, .match-with-video:focus-within { border-color: var(--gold); background: var(--panel2); }
+    .match-video { color: var(--cyan); font-size: .8rem; padding: .75rem 0; white-space: nowrap; }
     .match-video:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
     .match-row { display: grid; grid-template-columns: 72px 1.15fr 1.5fr .9fr .9fr .8fr; gap: 1rem; align-items: center; width: 100%; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .75rem; color: #f5f7ff; background: rgb(15 18 43 / .62); text-align: left; transition: transform .15s, border-color .15s, background .15s; }
     .match-row:hover, .match-row.active { transform: translateY(-1px); border-color: var(--gold); background: var(--panel2); }
+    .match-with-video .match-row { border: 0; background: transparent; }
+    .match-with-video .match-row:hover, .match-with-video .match-row.active { transform: none; }
     .match-number { color: var(--muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
     .match-map { font-size: 1.05rem; font-weight: 800; }
     .matchup { display:block; margin-top: .18rem; color: var(--muted); font-size: .78rem; }
@@ -84,6 +87,7 @@
     footer { margin-top: 2rem; color: var(--muted); font-size:.76rem; text-align:center; }
     @media (max-width: 720px) { .shell { padding-top: 28px; } .match-header { grid-template-columns:58px 1fr auto; } .match-header span:nth-child(n+4), .match-row .winner, .match-row .loser, .match-row .row-meta { display:none; } .match-row { grid-template-columns:58px 1fr auto; gap:.65rem; } .medal-header { grid-template-columns:1.2fr 1fr .5fr; } }
     @media (max-width: 500px) { .detail-grid { grid-template-columns:1fr; } .match-row { padding:.85rem; } h1 { font-size: 3.5rem; } }
+    @media (max-width: 720px) { .match-header { grid-template-columns:58px 1fr auto 65px; } .match-header .video-header { display:block; } }
   </style>
 </head>
 <body>
@@ -92,7 +96,7 @@
     <p class="intro">Super Sweats King of the Hill Tournament hosted by <a href="https://discord.gg/sglifers">SplitGate Lifers</a> on October 4, 2026.</p>
     <section class="section">
       <div class="section-head"><h2>Matches</h2><span>Click a row to inspect</span></div>
-      <div class="match-header" aria-hidden="true"><span>Match</span><span>Map</span><span>Score</span><span>Winner</span><span>Loser</span><span>Ended</span></div>
+      <div class="match-header" aria-hidden="true"><span>Match</span><span>Map</span><span>Score</span><span>Winner</span><span>Loser</span><span>Ended</span><span class="video-header">Video</span></div>
       <div class="matches" id="matches"></div>
     </section>
     <section class="section">
